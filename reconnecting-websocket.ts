@@ -34,6 +34,7 @@ export type Options = {
     maxEnqueuedMessages?: number;
     startClosed?: boolean;
     debug?: boolean;
+    wsHeaders?: {[key: string]: string};
 };
 
 const DEFAULT = {
@@ -379,9 +380,11 @@ export default class ReconnectingWebSocket {
                     return;
                 }
                 this._debug('connect', {url, protocols: this._protocols});
-                this._ws = this._protocols
-                    ? new WebSocket(url, this._protocols)
-                    : new WebSocket(url);
+                this._ws = new WebSocket(
+                    url,
+                    this._protocols,
+                    this._options.wsHeaders ? {headers: this._options.wsHeaders} : {},
+                );
                 this._ws!.binaryType = this._binaryType;
                 this._connectLock = false;
                 this._addListeners();
